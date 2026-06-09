@@ -158,7 +158,7 @@ function buildForm(row, i, triggerBtn) {
       // Use no-cors and update the UI optimistically on network success.
       await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        redirect: 'follow',
+        redirect: 'manual',
         mode: 'no-cors',
         body: JSON.stringify(payload),
       });
