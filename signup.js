@@ -157,7 +157,6 @@ function buildForm(row, i, triggerBtn) {
       const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         redirect: 'follow',
-        mode: 'no-cors',
         body: JSON.stringify(payload),
       });
 
