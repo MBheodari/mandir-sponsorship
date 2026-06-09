@@ -151,24 +151,17 @@ function buildForm(row, i, triggerBtn) {
         date: row.date,
         name: nameInput.value.trim(),
         contact: contactInput.value.trim(),
-        comments: commentsId ? wrapper.querySelector('#' + commentsId).value.trim() : '',
+        comments: wrapper.querySelector('#' + commentsId).value.trim(),
       };
 
-      const res = await fetch(APPS_SCRIPT_URL, {
+      // Apps Script POST redirects cross-origin; response body is unreadable.
+      // Use no-cors and update the UI optimistically on network success.
+      await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         redirect: 'follow',
+        mode: 'no-cors',
         body: JSON.stringify(payload),
       });
-
-      const data = await res.json();
-
-      if (data.status === 'already_taken') {
-        closeForm(wrapper, triggerBtn);
-        refreshRow(row.date);
-        return;
-      }
-
-      if (data.status !== 'ok') throw new Error(data.message || 'Submission failed');
 
       closeForm(wrapper, triggerBtn);
       refreshRow(row.date, { sponsor: payload.name, comments: payload.comments });
