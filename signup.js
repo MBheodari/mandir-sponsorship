@@ -10,6 +10,7 @@ async function loadSchedule() {
     if (!res.ok) throw new Error('Failed to load schedule');
     const rows = await res.json();
     renderTable(rows);
+    setScheduleYear(rows);
     loading.hidden = true;
     table.hidden = false;
   } catch (err) {
@@ -17,6 +18,13 @@ async function loadSchedule() {
     errorBanner.textContent = 'Unable to load the schedule. Please try again later.';
     errorBanner.hidden = false;
   }
+}
+
+function setScheduleYear(rows) {
+  const yearMatch = rows.length > 0 ? rows[0].date.match(/\d{4}/) : null;
+  const year = yearMatch ? yearMatch[0] : new Date().getFullYear();
+  document.getElementById('schedule-year').textContent = year;
+  document.title = 'Shiva Shakti Mandir — ' + year + ' Sponsorship Schedule';
 }
 
 function renderTable(rows) {
