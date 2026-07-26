@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shiva Shakti Mandir — Admin</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #auth-section {
+      max-width: 380px;
+      margin: 3rem auto;
+      padding: 0 1rem;
+    }
+    #auth-section h2 { margin-bottom: 1rem; font-size: 1.1rem; }
+    #auth-section input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: inherit;
+      margin-bottom: 0.75rem;
+    }
+    #auth-section input:focus { outline: 2px solid #2A8A86; border-color: #2A8A86; }
+    #auth-error { color: #c0392b; font-size: 0.85rem; margin-top: 0.5rem; min-height: 1rem; }
+
+    #stats-bar {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .stat {
+      background: #e0f2f0;
+      border-radius: 6px;
+      padding: 0.5rem 1.1rem;
+      text-align: center;
+      min-width: 80px;
+    }
+    .stat-value { display: block; font-size: 1.5rem; font-weight: 700; color: #2A8A86; }
+    .stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; }
+
+    #controls { margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    #controls label { font-size: 0.875rem; font-weight: 600; }
+    #filter-select {
+      padding: 0.35rem 0.6rem;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      font-family: inherit;
+    }
+
+    #admin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #admin-table thead th {
+      background: #e0f2f0;
+      text-align: left;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid #b5d8d5;
+      white-space: nowrap;
+    }
+    #admin-table tbody tr { border-bottom: 1px solid #d0e8e6; }
+    #admin-table td { padding: 0.6rem 0.75rem; vertical-align: top; font-size: 0.9rem; }
+
+    .admin-row-past td    { background: #fafafa; color: #aaa; }
+    .admin-row-taken td   { background: #f0faf9; }
+    .admin-row-open td    { background: #fff; }
+    .admin-row-info-only td { background: #f8fdfb; color: #888; font-style: italic; }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 3px;
+      padding: 0.15rem 0.45rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-taken     { background: #d4edea; color: #1a6e6a; }
+    .badge-open      { background: #e8f5e9; color: #2e7d32; }
+    .badge-info-only { background: #f3f3f3; color: #777; }
+    .badge-past      { background: #ececec; color: #aaa; }
+
+    .contact-cell a { color: #2A8A86; text-decoration: none; }
+    .contact-cell a:hover { text-decoration: underline; }
+
+    .no-rows { color: #888; padding: 1.5rem 0; font-style: italic; }
+
+    @media (max-width: 700px) {
+      #admin-table thead { display: none; }
+      #admin-table tbody tr {
+        display: block;
+        margin-bottom: 0.75rem;
+        border: 1px solid #d0e8e6;
+        border-radius: 6px;
+        padding: 0.75rem;
+        background: #fff;
+      }
+      #admin-table td { display: block; padding: 0.2rem 0; }
+      #admin-table td[data-label]::before {
+        content: attr(data-label) ": ";
+        font-weight: 700;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        color: #888;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="header-om" aria-hidden="true">ॐ</p>
+    <h1>Shiva Shakti Mandir</h1>
+    <p class="subtitle">Admin — Sponsorship Schedule</p>
+  </header>
+
+  <main>
+    <div id="auth-section">
+      <h2>Admin Access</h2>
+      <input id="key-input" type="password" placeholder="Enter admin key" autocomplete="off">
+      <button class="btn-claim" id="key-submit">View Schedule</button>
+      <p id="auth-error"></p>
+    </div>
+
+    <div id="dashboard" hidden>
+      <div id="loading" class="loading">Loading…</div>
+      <div id="stats-bar" hidden></div>
+      <div id="controls" hidden>
+        <label for="filter-select">Show:</label>
+        <select id="filter-select">
+          <option value="upcoming">Upcoming dates</option>
+          <option value="all">All dates</option>
+        </select>
+      </div>
+      <div style="overflow-x:auto">
+        <table id="admin-table" hidden>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Event</th>
+              <th>Status</th>
+              <th>Sponsor</th>
+              <th>Contact</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody id="admin-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPMqYFRH5iIo274Q_S80dwYB1KxinEXb2a22zloUrGNcy34K0rpZOSQDSZqTRlTfWr/exec';
+
+    let allRows = [];
+
+    const params = new URLSearchParams(window.location.search);
+    const urlKey = params.get('key');
+    if (urlKey) {
+      document.getElementById('auth-section').hidden = true;
+      document.getElementById('dashboard').hidden = false;
+      loadAdmin(urlKey);
+    }
+
+    document.getElementById('key-submit').addEventListener('click', () => {
+      const key = document.getElementById('key-input').value.trim();
+      if (!key) return;
+      document.getElementById('auth-error').textContent = '';
+      document.getElementById('auth-section').hidden = true;
+      document.getElementById('dashboard').hidden = false;
+      loadAdmin(key);
+    });
+
+    document.getElementById('key-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('key-submit').click();
+    });
+
+    document.getElementById('filter-select').addEventListener('change', () => renderTable(allRows));
+
+    async function loadAdmin(key) {
+      try {
+        const res = await fetch(APPS_SCRIPT_URL + '?admin=' + encodeURIComponent(key));
+        if (!res.ok) throw new Error('Network error');
+        const rows = await res.json();
+        if (rows.error) throw new Error(rows.error);
+
+        // Wrong token returns public data (no `contact` field)
+        if (rows.length > 0 && rows[0].contact === undefined) {
+          showAuthError();
+          return;
+        }
+
+        allRows = rows;
+        renderStats(rows);
+        renderTable(rows);
+        document.getElementById('loading').hidden = true;
+        document.getElementById('stats-bar').hidden = false;
+        document.getElementById('controls').hidden = false;
+        document.getElementById('admin-table').hidden = false;
+      } catch (err) {
+        document.getElementById('loading').textContent = 'Error: ' + err.message;
+      }
+    }
+
+    function showAuthError() {
+      document.getElementById('dashboard').hidden = true;
+      document.getElementById('auth-section').hidden = false;
+      document.getElementById('auth-error').textContent = 'Incorrect key. Please try again.';
+      document.getElementById('loading').hidden = false;
+      document.getElementById('loading').textContent = 'Loading…';
+      document.getElementById('key-input').value = '';
+      document.getElementById('key-input').focus();
+    }
+
+    function renderStats(rows) {
+      const upcoming  = rows.filter(r => !r.isPast);
+      const sponsored = upcoming.filter(r => r.status === 'taken').length;
+      const open      = upcoming.filter(r => r.status === 'open').length;
+      const bar = document.getElementById('stats-bar');
+      bar.innerHTML = '';
+      [
+        { value: upcoming.length, label: 'Upcoming' },
+        { value: sponsored,       label: 'Sponsored' },
+        { value: open,            label: 'Open' },
+        { value: rows.length,     label: 'Total' },
+      ].forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'stat';
+        div.innerHTML = `<span class="stat-value">${s.value}</span><span class="stat-label">${s.label}</span>`;
+        bar.appendChild(div);
+      });
+    }
+
+    function renderTable(rows) {
+      const filter  = document.getElementById('filter-select').value;
+      const visible = filter === 'upcoming' ? rows.filter(r => !r.isPast) : rows;
+      const tbody   = document.getElementById('admin-body');
+      tbody.innerHTML = '';
+
+      if (visible.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="7" class="no-rows">No dates to show.</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      visible.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.className = row.isPast ? 'admin-row-past' : 'admin-row-' + row.status;
+
+        const contact = row.contact || '';
+        let contactHtml = '—';
+        if (contact.includes('@')) {
+          contactHtml = `<a href="mailto:${contact}">${contact}</a>`;
+        } else if (contact) {
+          contactHtml = `<a href="tel:${contact.replace(/\D/g, '')}">${contact}</a>`;
+        }
+
+        tr.innerHTML = `
+          <td data-label="Date">${row.date}</td>
+          <td data-label="Time">${row.time || '—'}</td>
+          <td data-label="Event">${row.event}</td>
+          <td data-label="Status">${buildBadge(row.status, row.isPast)}</td>
+          <td data-label="Sponsor">${row.sponsor || '—'}</td>
+          <td data-label="Contact" class="contact-cell">${contactHtml}</td>
+          <td data-label="Comments">${row.comments || '—'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function buildBadge(status, isPast) {
+      if (isPast) return `<span class="status-badge badge-past">Past</span>`;
+      const map = {
+        taken:       ['badge-taken',     'Taken'],
+        open:        ['badge-open',      'Open'],
+        'info-only': ['badge-info-only', 'Info only'],
+      };
+      const [cls, label] = map[status] || ['badge-info-only', status];
+      return `<span class="status-badge ${cls}">${label}</span>`;
+    }
+  </script>
+</body>
+</html>
