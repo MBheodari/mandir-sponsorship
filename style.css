@@ -4,27 +4,34 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
   color: #1a1a1a;
-  background: #f9f7f4;
+  background: #f4faf9;
   line-height: 1.5;
 }
 
 header {
-  background: linear-gradient(to bottom, #1a3a7c, #f5c518);
+  background: linear-gradient(to right, #45AFAB, #AFCC35);
   color: #fff;
   text-align: center;
-  padding: 1.5rem 1rem;
+  padding: 1.75rem 1rem 1.5rem;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.header-om {
+  font-size: 2.25rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
 }
 
 header h1 {
-  font-size: 1.6rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
 }
 
 header .subtitle {
-  margin-top: 0.25rem;
+  margin-top: 0.3rem;
   font-size: 1rem;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 main {
@@ -56,17 +63,17 @@ main {
 }
 
 #schedule thead th {
-  background: #f0ebe3;
+  background: #e0f2f0;
   text-align: left;
   padding: 0.6rem 0.75rem;
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 2px solid #d4c9b8;
+  border-bottom: 2px solid #b5d8d5;
 }
 
 #schedule tbody tr {
-  border-bottom: 1px solid #e5ddd0;
+  border-bottom: 1px solid #d0e8e6;
 }
 
 #schedule tbody tr:last-child {
@@ -101,9 +108,9 @@ main {
 }
 
 /* Row states */
-.row-taken td { background: #fff; }
-.row-info-only td { background: #fafaf8; color: #888; font-style: italic; }
-.row-open td { background: #fff; }
+.row-taken td    { background: #fff; }
+.row-info-only td { background: #f8fdfb; color: #888; font-style: italic; }
+.row-open td     { background: #fff; }
 
 .sponsor-name {
   display: block;
@@ -124,7 +131,7 @@ main {
 
 /* Sponsor button */
 .btn-sponsor {
-  background: #1a3a7c;
+  background: #2A8A86;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -134,13 +141,13 @@ main {
   white-space: nowrap;
 }
 
-.btn-sponsor:hover { background: #122a5e; }
+.btn-sponsor:hover { background: #1E6E6B; }
 
 /* Inline signup form */
 .signup-form {
   margin-top: 0.75rem;
-  background: #f5f1eb;
-  border: 1px solid #d4c9b8;
+  background: #ecf7f6;
+  border: 1px solid #b5d8d5;
   border-radius: 6px;
   padding: 1rem;
 }
@@ -166,8 +173,8 @@ main {
 }
 
 .form-field input:focus {
-  outline: 2px solid #1a3a7c;
-  border-color: #1a3a7c;
+  outline: 2px solid #2A8A86;
+  border-color: #2A8A86;
 }
 
 .form-field input[aria-invalid="true"] {
@@ -193,7 +200,7 @@ main {
 }
 
 .btn-claim {
-  background: #1a3a7c;
+  background: #2A8A86;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -202,7 +209,7 @@ main {
   cursor: pointer;
 }
 
-.btn-claim:hover { background: #122a5e; }
+.btn-claim:hover    { background: #1E6E6B; }
 .btn-claim:disabled { background: #aaa; cursor: not-allowed; }
 
 .btn-cancel {
@@ -215,7 +222,7 @@ main {
   color: #555;
 }
 
-.btn-cancel:hover { background: #eee; }
+.btn-cancel:hover { background: #e8f5f4; }
 
 .submit-error {
   font-size: 0.85rem;
@@ -224,14 +231,15 @@ main {
 
 /* Mobile: stacked cards under 600px */
 @media (max-width: 599px) {
-  header h1 { font-size: 1.3rem; }
+  .header-om  { font-size: 1.75rem; }
+  header h1   { font-size: 1.4rem; }
 
   #schedule thead { display: none; }
 
   #schedule tbody tr {
     display: block;
     margin-bottom: 0.75rem;
-    border: 1px solid #e5ddd0;
+    border: 1px solid #d0e8e6;
     border-radius: 6px;
     background: #fff;
     padding: 0.75rem;
