@@ -36,7 +36,16 @@ function renderTable(rows) {
     tr.dataset.index = i;
 
     const tdDate = document.createElement('td');
-    tdDate.textContent = row.date;
+    const dateSpan = document.createElement('span');
+    dateSpan.className = 'date-text';
+    dateSpan.textContent = row.date;
+    tdDate.appendChild(dateSpan);
+    if (row.time) {
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'time-text';
+      timeSpan.textContent = row.time;
+      tdDate.appendChild(timeSpan);
+    }
 
     const tdEvent = document.createElement('td');
     tdEvent.textContent = row.event;
