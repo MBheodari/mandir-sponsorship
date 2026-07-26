@@ -64,16 +64,10 @@ function buildSponsorCell(row, i) {
   const frag = document.createDocumentFragment();
 
   if (row.status === 'taken') {
-    const name = document.createElement('span');
-    name.className = 'sponsor-name';
-    name.textContent = row.sponsor;
-    frag.appendChild(name);
-    if (row.comments) {
-      const comments = document.createElement('span');
-      comments.className = 'sponsor-comments';
-      comments.textContent = row.comments;
-      frag.appendChild(comments);
-    }
+    const label = document.createElement('span');
+    label.className = 'sponsored-label';
+    label.textContent = 'Sponsored';
+    frag.appendChild(label);
   } else if (row.status === 'info-only') {
     const label = document.createElement('span');
     label.className = 'info-only-label';
@@ -226,16 +220,10 @@ function refreshRow(date, sponsorData) {
       tr.className = 'row-taken';
       const sponsorCell = tr.querySelector('td:last-child');
       sponsorCell.innerHTML = '';
-      const name = document.createElement('span');
-      name.className = 'sponsor-name';
-      name.textContent = sponsorData.sponsor;
-      sponsorCell.appendChild(name);
-      if (sponsorData.comments) {
-        const comments = document.createElement('span');
-        comments.className = 'sponsor-comments';
-        comments.textContent = sponsorData.comments;
-        sponsorCell.appendChild(comments);
-      }
+      const label = document.createElement('span');
+      label.className = 'sponsored-label';
+      label.textContent = 'Sponsored';
+      sponsorCell.appendChild(label);
     } else {
       loadSchedule();
     }
