@@ -65,6 +65,11 @@ function buildSponsorCell(row, i) {
       comments.textContent = row.comments;
       frag.appendChild(comments);
     }
+  } else if (row.status === 'info-only') {
+    const label = document.createElement('span');
+    label.className = 'info-only-label';
+    label.textContent = 'No sponsorship needed';
+    frag.appendChild(label);
   } else if (row.status === 'open') {
     const btn = document.createElement('button');
     btn.className = 'btn-sponsor';

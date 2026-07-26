@@ -105,6 +105,12 @@ main {
   color: #666;
 }
 
+.info-only-label {
+  font-size: 0.85rem;
+  color: #999;
+  font-style: italic;
+}
+
 /* Sponsor button */
 .btn-sponsor {
   background: #1a3a7c;
